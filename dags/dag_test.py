@@ -1,6 +1,13 @@
 from airflow import DAG
 from airflow.operators.papermill_operator import PapermillOperator
 from datetime import datetime, timedelta
+import os
+from pathlib import Path
+
+BASE_PATH = os.path.dirname(Path(os.path.dirname(os.path.abspath(__file__))))
+loc = BASE_PATH
+
+
 
 # Ustawienia dla DAG-a
 default_args = {
@@ -19,7 +26,7 @@ dag = DAG(
 )
 
 # Ścieżka do katalogu, gdzie znajdują się notebooki
-notebooks_path = "../notebooks/"
+notebooks_path = os.path.join(loc, 'notebooks')
 
 # Lista notebooków do wykonania
 extract_notebook = 'extract.ipynb'
@@ -31,22 +38,22 @@ load_notebook = 'load.ipynb'
 # Tworzenie operatora dla każdego notebooka
 extract_operator = PapermillOperator(
         task_id=f'extract_ipynb',
-        input_nb=notebooks_path + extract_notebook,
-        output_nb=notebooks_path + 'output/'+ f'extracted_notebook.ipynb',
+        input_nb=os.path.join(notebooks_path , extract_notebook),
+        output_nb=os.path.join(notebooks_path, 'output', 'extracted_notebook.ipynb'),
         parameters={"count": 5},
         dag=dag
     )
 transform_operator = PapermillOperator(
         task_id=f'transform_ipynb',
-        input_nb=notebooks_path + transform_notebok,
-        output_nb=notebooks_path + 'output/'+ f'transformed_notebook.ipynb',
+        input_nb=os.path.join(notebooks_path , transform_notebok),
+        output_nb=os.path.join(notebooks_path, 'output', 'transformed_notebook.ipynb'),
         parameters={},
         dag=dag
     )
 load_operator = PapermillOperator(
         task_id=f'load_ipynb',
-        input_nb=notebooks_path + load_notebook,
-        output_nb=notebooks_path + 'output/'+ f'loaded_notebook.ipynb',
+        input_nb=os.path.join(notebooks_path , load_notebook),
+        output_nb=os.path.join(notebooks_path, 'output', 'loaded_notebook.ipynb'),
         parameters={"table_name": "Papermill_test"},
         dag=dag
     )
