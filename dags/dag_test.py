@@ -40,7 +40,7 @@ extract_operator = PapermillOperator(
         task_id=f'extract_ipynb',
         input_nb=os.path.join(notebooks_path , extract_notebook),
         output_nb=os.path.join(notebooks_path, 'output', 'extracted_notebook.ipynb'),
-        parameters={"count": 20},
+        parameters={"count": 30},
         dag=dag
     )
 transform_operator = PapermillOperator(
